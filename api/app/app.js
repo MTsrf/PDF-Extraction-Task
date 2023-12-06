@@ -5,12 +5,11 @@ const { readdirSync } = require('fs')
 const errorHandler = require('./middleware/errorHandler')
 const connectDb = require('./config/db')
 const path = require('path')
-const config = require('./util/constants');
 
 const app = express()
 dotenv.config()
 app.use(express.json(), cors())
-app.use("/files", express.static("files"));
+app.use("/files", express.static(path.join(__dirname, "../public/files/")));
 const routerPath = path.join(__dirname, 'routes');
 const files = readdirSync(routerPath);
 files.map((file) => {
@@ -27,3 +26,4 @@ app.use(errorHandler)
 connectDb()
 
 module.exports = app;
+

@@ -6,25 +6,30 @@ const path = require("path")
 const fs = require("fs/promises")
 
 exports.fileUploading = async (req, res, next) => {
-    const fullUrl = `${req.protocol}://${req.get('host')}/files/${req.file.filename}`;
-    console.log(req.file.filename);
-    console.log("req.user", req.user)
     try {
+        const file = req.file;
+        const filename = await randomNameGenerator(file.originalname);
+        const directoryPath = path.join("public/files", path.dirname(filename));
+        await fs.mkdir(directoryPath, { recursive: true });
+
+        await fs.writeFile("public/files/" + filename, file?.buffer);
         const user = await files.findOne({ user: req.user });
+        const url = process.env.CURRENT_URL + "files/" + filename
+        console.log(url)
         console.log("req.user", user)
         if (user) {
             await files.updateOne(
                 { user: req.user },
                 {
                     $push: {
-                        pdf: { IsExtract: false, name: req.file.filename, path: fullUrl },
+                        pdf: { IsExtract: false, name: filename, path: url },
                     },
                 }
             );
         } else {
             const newFile = new files({
                 user: req.user,
-                pdf: [{ IsExtract: false, name: req.file.filename, path: fullUrl }],
+                pdf: [{ IsExtract: false, name: filename, path: url }],
             });
             await newFile.save();
         }
