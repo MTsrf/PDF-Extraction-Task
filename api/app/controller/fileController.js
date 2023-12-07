@@ -53,12 +53,12 @@ exports.extractFile = async (req, res, next) => {
 
         const newName = await randomNameGenerator(user.pdf[0].name);
 
-        const directoryPath = path.join("files", path.dirname(newName));
+        const directoryPath = path.join("public/files", path.dirname(filename));
         await fs.mkdir(directoryPath, { recursive: true });
-        await fs.writeFile("files/" + newName, newPdfBytes);
+        await fs.writeFile("public/files/" + newName, newPdfBytes);
 
-        const fullUrl = `${req.protocol}://${req.get('host')}/files/${newName}`;
-
+        // const fullUrl = `${req.protocol}://${req.get('host')}/files/${newName}`;
+        const fullUrl = process.env.CURRENT_URL + "files/" + newName
         await files.updateOne(
             { user: req.user },
             {
