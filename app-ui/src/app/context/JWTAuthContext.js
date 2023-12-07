@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
 
 
-    const login = async (formData) => {
+    const login = async (formData, IsLoading) => {
         localStorage.removeItem('accessToken')
         delete axios.defaults.headers.common.Authorization
         try {
@@ -107,12 +107,14 @@ export const AuthProvider = ({ children }) => {
             const { accessToken } = response.data
             setSession(accessToken)
         } catch (error) {
-            AlertService.error(error)
+            IsLoading(false)
+            return
         }
         try {
             var res = await axios.get(`${baseUrl}/user-details`)
         } catch (error) {
-            AlertService.error(error)
+            IsLoading(false)
+            return
         }
         if (res === undefined) {
             logout();
@@ -123,7 +125,7 @@ export const AuthProvider = ({ children }) => {
             navigate("/view/default")
 
         }
-
+        IsLoading(false)
 
         dispatch({
             type: 'LOGIN',
@@ -133,19 +135,21 @@ export const AuthProvider = ({ children }) => {
         })
     }
 
-    const register = async (formData) => {
+    const register = async (formData, IsLoading) => {
         console.log(formData)
         try {
             const response = await axios.post(baseUrl + 'user_signup', formData)
             const { accessToken } = response.data
             setSession(accessToken)
         } catch (error) {
-            AlertService.error(error)
+            IsLoading(false)
+            return
         }
         try {
             var res = await axios.get(`${baseUrl}/user-details`)
         } catch (error) {
-            AlertService.error(error)
+            IsLoading(false)
+            return
         }
         if (res === undefined) {
             logout();
@@ -156,6 +160,7 @@ export const AuthProvider = ({ children }) => {
             navigate("/view/default")
 
         }
+        IsLoading(false)
         dispatch({
             type: 'REGISTER',
             payload: {

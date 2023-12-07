@@ -8,7 +8,7 @@ import { uploadPdfService } from '../service/pdfService';
 import { AlertService } from '../service/alertService';
 import { useSnackbar } from 'notistack';
 import { trackPromise } from 'react-promise-tracker';
-
+import { LoadingButton } from '@mui/lab'
 const REQUIRED = "Field is required"
 const validationSchema = Yup.object().shape({
     file: Yup.mixed()
@@ -89,18 +89,15 @@ const PdfForm = ({ onClose }) => {
                             </Grid>
 
                             <Grid item xl={12} xs={12}>
-                                <Button
-                                    color="primary"
+                                <LoadingButton
+                                    type="submit"
+                                    loading={formik.isSubmitting}
                                     fullWidth
                                     variant="contained"
-                                    type="submit"
-                                    disabled={formik.isSubmitting}
+                                    sx={{ mt: 3, mb: 2 }}
                                 >
-                                    <IconButton>
-                                        <SendIcon />
-                                    </IconButton>
                                     Submit
-                                </Button>
+                                </LoadingButton>
                             </Grid>
                         </Grid>
                     </Form>

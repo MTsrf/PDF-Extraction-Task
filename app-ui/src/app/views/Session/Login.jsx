@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -11,7 +10,7 @@ import { validationSchema } from '../../utils/SessionValidation';
 import { styled } from '@mui/material';
 import useAuth from '../../hooks/useAuth'
 import { Alert } from '../../component/CommonComponent/Alert';
-
+import { LoadingButton } from "@mui/lab";
 const Link = styled('span')(() => ({
     color: "blue"
 }));
@@ -22,8 +21,8 @@ const initialValues = {
 
 function Login({ handleChanges }) {
     const { login } = useAuth()
-    const handleSubmit = async (values) => {
-        await login(values)
+    const handleSubmit = async (values, { setSubmitting }) => {
+        await login(values, setSubmitting)
     };
 
     return (
@@ -31,7 +30,9 @@ function Login({ handleChanges }) {
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={handleSubmit}
+                onSubmit={(values, action) => {
+                    handleSubmit(values, action)
+                }}
             >
                 {({
                     values,
@@ -90,14 +91,15 @@ function Login({ handleChanges }) {
                                 helperText={touched.password && errors.password}
                                 error={Boolean(errors.password && touched.password)}
                             />
-                            <Button
+                            <LoadingButton
                                 type="submit"
+                                loading={isSubmitting}
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Sign In
-                            </Button>
+                                Login
+                            </LoadingButton>
                             <Grid container>
                                 <Grid item>
                                     <Link onClick={handleChanges} sx={{ cursor: "pointer" }} variant="body2">

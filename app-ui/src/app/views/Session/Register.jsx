@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import { LoadingButton } from '@mui/lab';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -25,8 +25,8 @@ const initialValues = {
 
 function Register({ handleChanges }) {
     const { register } = useAuth()
-    const handleSubmit = async (values) => {
-        await register(values)
+    const handleSubmit = async (values, { setSubmitting }) => {
+        await register(values, setSubmitting)
     };
 
     return (
@@ -34,7 +34,9 @@ function Register({ handleChanges }) {
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSignupSchema}
-                onSubmit={handleSubmit}
+                onSubmit={(values, action) => {
+                    handleSubmit(values, action)
+                }}
             >
                 {({
                     values,
@@ -131,14 +133,15 @@ function Register({ handleChanges }) {
                                     />
                                 </Grid>
                             </Grid>
-                            <Button
+                            <LoadingButton
                                 type="submit"
+                                loading={isSubmitting}
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
                                 Sign Up
-                            </Button>
+                            </LoadingButton>
                             <Grid container justifyContent="flex-end">
                                 <Grid item>
                                     <Link onClick={handleChanges} sx={{ cursor: "pointer" }} variant="body2">
